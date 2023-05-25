@@ -37,8 +37,6 @@ class CalculatorController: UIViewController {
     @IBOutlet weak var lightBtn: UIButton!
     @IBOutlet weak var darkBtn: UIButton!
     
-    var presentDivide = false
-    var findZero = false
     var operationTap = false
     var numberString:String = ""
     var numberDoubleValue:String = ""
@@ -188,25 +186,9 @@ class CalculatorController: UIViewController {
         if numberString != "" {
             if(isValidInput())
             {
-                if numberString == " % " {
-                    let checkedWorkingsForPercent = numberString.replacingOccurrences(of: " % ", with: " * 0.0")
-                    
-                    
-                    let expression = NSExpression(format: checkedWorkingsForPercent)
-                    if  let result = expression.expressionValue(with: nil, context: nil) as? Double {
-                        let numberFormatter = NumberFormatter()
-                        numberFormatter.numberStyle = .decimal
-                        let formattedNumber = numberFormatter.string(from: NSNumber(value:result))
-                        calculatorResults.text = formattedNumber
-                    }
-                    else {
-                        print("failed")
-                    }
-                }
-                else{
-                    numberDoubleValue = numberString + ".0"
-                    let checkedWorkingsForPercent = numberDoubleValue.replacingOccurrences(of: " % ", with: " * 0.0")
-                    
+                numberDoubleValue = numberString + ".0"
+                   let checkedWorkingsForPercent = numberDoubleValue.replacingOccurrences(of: " % ", with: " * 0.01 * ")
+                    print(checkedWorkingsForPercent)
                     
                     let expression = NSExpression(format: checkedWorkingsForPercent)
                     if  let result = expression.expressionValue(with: nil, context: nil) as? Double {
@@ -229,9 +211,7 @@ class CalculatorController: UIViewController {
                 alert.addAction(UIAlertAction(title: "Okay", style: .default))
                 self.present(alert, animated: true, completion: nil)
             }
-        }
     }
-    
     func isValidInput() ->Bool
     {
         var count = 0
@@ -303,18 +283,12 @@ class CalculatorController: UIViewController {
     func addStringValue(value: String)
     {
         if (value == " % ") {
-            presentDivide = true
             numberString = numberString + value
             displayNumber.text = numberString
         } else {
-            if presentDivide == true {
-                if (value == "0") {
-                    findZero = true
-                    presentDivide = false
-                }
-            }
-            numberString = numberString + value
-            displayNumber.text = numberString
+      
+                numberString = numberString + value
+                displayNumber.text = numberString
         }
     }
     
@@ -324,9 +298,11 @@ class CalculatorController: UIViewController {
             switch sender.tag {
             case 1:
                 clearAll()
+                operationTap = false
             case 2:
                 numberString.removeLast()
                 displayNumber.text = numberString
+                operationTap = false
             case 3:
                 addStringValue(value: " % ")
             case 4:
